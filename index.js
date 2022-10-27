@@ -1,11 +1,13 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const fs = require('fs');
 
-const url = 'https://vc.ru/';
+const URL = 'https://vc.ru/';
 // const PAGE_SIZE=12;
-const data=[];
+// const data=[];
 
 const getData = (html) => {
+    const data=[];
     const $ = cheerio.load(html);
     $('div.feed__item').each((i, el)=> {
         let title=''
@@ -18,18 +20,17 @@ const getData = (html) => {
             title,
             $(el).find('a.content-link').attr('href'),
         ]);
-        console.log($(el).find('div.l-mb-28').attr('data-content-id'));
+        // console.log($(el).find('div.l-mb-28').attr('data-content-id'));
     })
     console.log(data);
+    return data;
 }
 async function main(){
-    const resp = await axios.get(url);
-    getData(resp.data)
+    const resp = await axios.get(URL);
+    const data=getData(resp.data);
+    fs.writeFileSync('./result.json', JSON.stringify(data),'utf8');
 }
 
 main()
-
-module.exports = data;
-
 
 
